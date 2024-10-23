@@ -13,6 +13,9 @@ public class PlayerController : MonoBehaviour
     public float horizontalInput, verticalInput;
     public Animator characterAnimator;
     private Rigidbody rb;
+    private int chestCounter = 0;
+    public GameObject winZone;
+
     
 
     // Start is called before the first frame update
@@ -20,6 +23,8 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         characterAnimator = GetComponent<Animator>();
+        LootBox box = FindAnyObjectByType<LootBox>();
+        if (box) box.OnBoxOpen += CounterIncrement;
     }
 
     // Update is called once per frame
@@ -56,4 +61,16 @@ public class PlayerController : MonoBehaviour
     {
         isOnGround = true;
     }
+    private void CounterIncrement(GameObject[] obj)
+    {
+        chestCounter++;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("WinZone") && chestCounter == 1)
+        {
+            Debug.Log("You Win");
+        }
+    }
+
 }
