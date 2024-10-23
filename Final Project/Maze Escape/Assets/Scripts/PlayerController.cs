@@ -8,27 +8,52 @@ public class PlayerController : MonoBehaviour
 
     public float playerSpeed;
     public float jumpForce;
+    public float turnSpeed;
+    public bool isOnGround = true;
+    public float horizontalInput, verticalInput;
+    public Animator characterAnimator;
     private Rigidbody rb;
+    
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        characterAnimator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        rb.transform.position += playerMovement() * playerSpeed * Time.deltaTime;
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
-        }
-    }
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
 
-    Vector3 playerMovement()
+        transform.Translate(Vector3.forward * Time.deltaTime * playerSpeed * verticalInput);
+        transform.Rotate(Vector3.up, turnSpeed * horizontalInput * Time.deltaTime);
+
+        if(Input.GetKeyDown(KeyCode.Space) && isOnGround)
+        {
+            characterAnimator.SetTrigger("JumpTrigger");
+            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+            isOnGround = false;
+        }
+
+        if(verticalInput == 0)
+        {
+            characterAnimator.SetFloat("Speed", 0);
+        }
+        else if(verticalInput > 0)
+        {
+            characterAnimator.SetFloat("Speed", 1);
+        }
+        else
+        {
+            characterAnimator.SetFloat("Speed", -1);
+        }
+
+    }
+    private void OnCollisionEnter(Collision collision)
     {
-        Vector3 playerMovement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        return playerMovement;
+        isOnGround = true;
     }
 }
