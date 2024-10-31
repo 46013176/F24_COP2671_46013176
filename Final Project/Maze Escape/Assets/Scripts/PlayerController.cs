@@ -71,6 +71,12 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("You Win");
         }
+
+        if(other.gameObject.CompareTag("Trap"))
+        {
+            Debug.Log("You died!");
+        }
     }
+
 
 }
