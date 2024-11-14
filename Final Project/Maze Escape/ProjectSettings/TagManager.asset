@@ -6,6 +6,7 @@ TagManager:
   tags:
   - WinZone
   - Trap
+  - IdolTag
   layers:
   - Default
   - TransparentFX

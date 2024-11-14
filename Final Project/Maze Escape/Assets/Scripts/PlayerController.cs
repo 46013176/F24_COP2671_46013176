@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,19 +13,20 @@ public class PlayerController : MonoBehaviour
     public bool isOnGround = true;
     public float horizontalInput, verticalInput;
     public Animator characterAnimator;
+    public AudioSource music;
     private Rigidbody rb;
-    private int chestCounter = 0;
-    public GameObject winZone;
 
-    
+    public int idolTotal;
+    public Text idolText;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         characterAnimator = GetComponent<Animator>();
-        LootBox box = FindAnyObjectByType<LootBox>();
-        if (box) box.OnBoxOpen += CounterIncrement;
+        music = GetComponent<AudioSource>();
+
+        idolText.text = "Total Idols Left: " + idolTotal.ToString();
     }
 
     // Update is called once per frame
@@ -61,22 +63,26 @@ public class PlayerController : MonoBehaviour
     {
         isOnGround = true;
     }
-    private void CounterIncrement(GameObject[] obj)
-    {
-        chestCounter++;
-    }
+
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("WinZone") && chestCounter == 1)
+        if (other.gameObject.CompareTag("WinZone"))
         {
             Debug.Log("You Win");
         }
 
-        if(other.gameObject.CompareTag("Trap"))
+        if (other.gameObject.CompareTag("Trap"))
         {
             Debug.Log("You died!");
         }
-    }
 
+        if(other.gameObject.CompareTag("IdolTag"))
+        {
+            idolTotal--;
+            idolText.text = "Total Idols Left: " + idolTotal.ToString();
+            Destroy(other.gameObject);
+        }
+    }
 
 }
